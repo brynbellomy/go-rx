@@ -3,8 +3,8 @@ package rx_test
 import (
 	"sync"
 
+	"github.com/brynbellomy/go-result"
 	"github.com/brynbellomy/go-rx"
-	"github.com/listenonrepeat/listenonrepeat/backend/common/result"
 
 	τ "gopkg.in/check.v1"
 )

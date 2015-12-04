@@ -1,6 +1,6 @@
 package rx
 
-import "github.com/listenonrepeat/listenonrepeat/backend/common/result"
+import "github.com/brynbellomy/go-result"
 
 type Broadcaster struct {
 	Channels  map[uint64]chan result.Result

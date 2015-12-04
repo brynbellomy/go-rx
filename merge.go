@@ -3,7 +3,7 @@ package rx
 import (
 	"sync"
 
-	"github.com/listenonrepeat/listenonrepeat/backend/common/result"
+	"github.com/brynbellomy/go-result"
 )
 
 type Merge struct {
