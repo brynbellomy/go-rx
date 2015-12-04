@@ -1,6 +1,7 @@
-package async
+package rx_test
 
 import (
+	"github.com/brynbellomy/go-rx"
 	"github.com/listenonrepeat/listenonrepeat/backend/common/result"
 	τ "gopkg.in/check.v1"
 )
@@ -15,7 +16,7 @@ func (s *chanObserverSuite) TestChandler(c *τ.C) {
 	recvd := make([]result.Result, 0)
 	length := 0
 
-	b := NewChandler(ch, Handlers{
+	b := rx.NewChandler(ch, rx.Handlers{
 		OnNext: func(r result.Result) {
 			recvd = append(recvd, r)
 		},

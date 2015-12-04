@@ -1,8 +1,9 @@
-package async
+package rx_test
 
 import (
 	"sync"
 
+	"github.com/brynbellomy/go-rx"
 	"github.com/listenonrepeat/listenonrepeat/backend/common/result"
 
 	τ "gopkg.in/check.v1"
@@ -13,7 +14,7 @@ type batcherSuite struct{}
 var _ = τ.Suite(&batcherSuite{})
 
 func (s *batcherSuite) TestBatcher(c *τ.C) {
-	b := NewBatcher(5)
+	b := rx.NewBatcher(5)
 
 	wait := &sync.WaitGroup{}
 	wait.Add(1)

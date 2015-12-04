@@ -1,7 +1,9 @@
-package async
+package rx_test
 
 import (
 	"sync"
+
+	"github.com/brynbellomy/go-rx"
 
 	τ "gopkg.in/check.v1"
 )
@@ -11,7 +13,7 @@ type cancelableSuite struct{}
 var _ = τ.Suite(&cancelableSuite{})
 
 func (s *cancelableSuite) TestCancelable(c *τ.C) {
-	b := NewCancelable()
+	b := rx.NewCancelable()
 
 	canceled := []bool{false, false, false}
 

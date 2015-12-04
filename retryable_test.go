@@ -1,7 +1,9 @@
-package async
+package rx_test
 
 import (
 	"fmt"
+
+	"github.com/brynbellomy/go-rx"
 	τ "gopkg.in/check.v1"
 )
 
@@ -11,9 +13,9 @@ var _ = τ.Suite(&retryableSuite{})
 
 func (s *retryableSuite) TestRetryableSucceedImmediately(c *τ.C) {
 	i := 0
-	r := Retryable{
+	r := rx.Retryable{
 		MaxAttempts: 5,
-		Operation: FuncOperation(func() (interface{}, error) {
+		Operation: rx.FuncOperation(func() (interface{}, error) {
 			i++
 			return 1337, nil
 		}),
@@ -29,9 +31,9 @@ func (s *retryableSuite) TestRetryableSucceedEventually(c *τ.C) {
 	i := 0
 	theErr := fmt.Errorf("the error")
 
-	r := Retryable{
+	r := rx.Retryable{
 		MaxAttempts: 5,
-		Operation: FuncOperation(func() (interface{}, error) {
+		Operation: rx.FuncOperation(func() (interface{}, error) {
 			i++
 			if i == 2 {
 				return 1337, nil
@@ -50,9 +52,9 @@ func (s *retryableSuite) TestRetryableSucceedEventually(c *τ.C) {
 func (s *retryableSuite) TestRetryableFailAlways(c *τ.C) {
 	i := 0
 	theErr := fmt.Errorf("the error")
-	r := Retryable{
+	r := rx.Retryable{
 		MaxAttempts: 5,
-		Operation: FuncOperation(func() (interface{}, error) {
+		Operation: rx.FuncOperation(func() (interface{}, error) {
 			i++
 			return nil, theErr
 		}),

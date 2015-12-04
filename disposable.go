@@ -1,4 +1,4 @@
-package async
+package rx
 
 type (
 	FuncDisposable struct {

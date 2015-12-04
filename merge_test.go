@@ -1,8 +1,9 @@
-package async
+package rx_test
 
 import (
 	"sort"
 
+	"github.com/brynbellomy/go-rx"
 	"github.com/listenonrepeat/listenonrepeat/backend/common/result"
 
 	τ "gopkg.in/check.v1"
@@ -15,7 +16,7 @@ var _ = τ.Suite(&mergeSuite{})
 func (s *mergeSuite) TestMerge(c *τ.C) {
 	ch1, ch2 := make(chan result.Result), make(chan result.Result)
 
-	m := NewMerge(ch1, ch2)
+	m := rx.NewMerge(ch1, ch2)
 
 	go func() {
 		ch1 <- result.Success("xyzzy")

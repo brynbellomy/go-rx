@@ -1,16 +1,16 @@
-package async
+package rx
 
 import "github.com/listenonrepeat/listenonrepeat/backend/common/result"
 
 type Broadcaster struct {
-	channels  map[uint64]chan result.Result
+	Channels  map[uint64]chan result.Result
 	completed bool
 	counter   uint64
 }
 
 func NewBroadcaster() *Broadcaster {
 	return &Broadcaster{
-		channels: make(map[uint64]chan result.Result),
+		Channels: make(map[uint64]chan result.Result),
 	}
 }
 
@@ -20,16 +20,16 @@ func (b *Broadcaster) Subscribe() (IObservable, IDisposable) {
 	counter := b.counter
 	b.counter++
 
-	b.channels[counter] = ch
+	b.Channels[counter] = ch
 
 	return ObservableChan(ch), NewFuncDisposable(func() {
 		close(ch)
-		delete(b.channels, counter)
+		delete(b.Channels, counter)
 	})
 }
 
 func (b *Broadcaster) Send(val result.Result) {
-	for _, ch := range b.channels {
+	for _, ch := range b.Channels {
 		ch <- val
 	}
 }
@@ -39,9 +39,9 @@ func (b *Broadcaster) Complete() {
 		panic("Broadcaster: cannot call .Complete() more than once")
 	}
 
-	for _, ch := range b.channels {
+	for _, ch := range b.Channels {
 		close(ch)
 	}
-	b.channels = nil
+	b.Channels = nil
 	b.completed = true
 }

@@ -1,4 +1,4 @@
-package async
+package rx
 
 type (
 	Concat struct {

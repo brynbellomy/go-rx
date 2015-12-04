@@ -1,6 +1,9 @@
-package async
+package rx_test
 
-import τ "gopkg.in/check.v1"
+import (
+	"github.com/brynbellomy/go-rx"
+	τ "gopkg.in/check.v1"
+)
 
 type disposableSuite struct{}
 
@@ -8,7 +11,7 @@ var _ = τ.Suite(&disposableSuite{})
 
 func (s *disposableSuite) TestFuncDisposable(c *τ.C) {
 	wasCalled := false
-	f := NewFuncDisposable(func() { wasCalled = true })
+	f := rx.NewFuncDisposable(func() { wasCalled = true })
 
 	f.Cancel()
 
@@ -18,13 +21,13 @@ func (s *disposableSuite) TestFuncDisposable(c *τ.C) {
 }
 
 func (s *disposableSuite) TestCompositeDisposable(c *τ.C) {
-	d := NewCompositeDisposable()
+	d := rx.NewCompositeDisposable()
 
 	flag1, flag2, flag3 := false, false, false
 
-	d.Add(NewFuncDisposable(func() { flag1 = true }))
-	d.Add(NewFuncDisposable(func() { flag2 = true }))
-	d.Add(NewFuncDisposable(func() { flag3 = true }))
+	d.Add(rx.NewFuncDisposable(func() { flag1 = true }))
+	d.Add(rx.NewFuncDisposable(func() { flag2 = true }))
+	d.Add(rx.NewFuncDisposable(func() { flag3 = true }))
 
 	d.Cancel()
 

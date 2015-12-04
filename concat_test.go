@@ -1,6 +1,7 @@
-package async
+package rx_test
 
 import (
+	"github.com/brynbellomy/go-rx"
 	"github.com/listenonrepeat/listenonrepeat/backend/common/result"
 
 	τ "gopkg.in/check.v1"
@@ -11,8 +12,8 @@ type concatSuite struct{}
 var _ = τ.Suite(&concatSuite{})
 
 func (s *concatSuite) TestConcat(c *τ.C) {
-	ch1, ch2, ch3 := NewSubject(), NewSubject(), NewSubject()
-	cat := NewConcat(ch1, ch2, ch3)
+	ch1, ch2, ch3 := rx.NewSubject(), rx.NewSubject(), rx.NewSubject()
+	cat := rx.NewConcat(ch1, ch2, ch3)
 
 	go func() {
 		ch1.Send(result.Success("xyzzy"))

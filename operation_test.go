@@ -1,7 +1,9 @@
-package async
+package rx_test
 
 import (
 	"fmt"
+
+	"github.com/brynbellomy/go-rx"
 	τ "gopkg.in/check.v1"
 )
 
@@ -13,7 +15,7 @@ func (s *operationSuite) TestFuncOperationFailure(c *τ.C) {
 	called := false
 	theErr := fmt.Errorf("An error")
 
-	op := NewFuncOperation(func() (interface{}, error) {
+	op := rx.NewFuncOperation(func() (interface{}, error) {
 		called = true
 		return nil, theErr
 	})
@@ -28,7 +30,7 @@ func (s *operationSuite) TestFuncOperationFailure(c *τ.C) {
 func (s *operationSuite) TestFuncOperationSuccess(c *τ.C) {
 	called := false
 
-	op := NewFuncOperation(func() (interface{}, error) {
+	op := rx.NewFuncOperation(func() (interface{}, error) {
 		called = true
 		return 1337, nil
 	})

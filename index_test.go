@@ -1,4 +1,4 @@
-package async
+package rx_test
 
 import (
 	"testing"

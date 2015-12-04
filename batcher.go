@@ -1,4 +1,4 @@
-package async
+package rx
 
 import "github.com/listenonrepeat/listenonrepeat/backend/common/result"
 
