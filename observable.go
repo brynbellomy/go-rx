@@ -1,7 +1,5 @@
 package rx
 
-import "github.com/brynbellomy/go-result"
-
 type Observable struct {
 	OnSubscribe func() (IObservable, IDisposable)
 }
@@ -25,36 +23,16 @@ func (o *Observable) Map(tfm func(x interface{}) (interface{}, error)) *Observab
 	return &Observable{
 		func() (IObservable, IDisposable) {
 			chIn, cancelIn := o.Subscribe()
-			out, cancel := NewSubject(), NewCancelable()
-
+			m := NewMap(tfm)
 			go func() {
 				defer cancelIn.Cancel()
-				defer out.Complete()
-
-				for {
-					select {
-					case <-cancel.OnCancel():
-						return
-
-					case x, open := <-chIn.Out():
-						if !open {
-							return
-						}
-						if x.IsError() {
-							out.Send(x)
-						} else {
-							newVal, err := tfm(x.Value())
-							if err != nil {
-								out.Send(result.Failure(err))
-							} else {
-								out.Send(result.Success(newVal))
-							}
-						}
-					}
+				for x := range chIn.Out() {
+					m.Send(x)
 				}
+				m.Complete()
 			}()
 
-			return out, cancel
+			return m.Subscribe()
 		},
 	}
 }
