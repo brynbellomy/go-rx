@@ -1,56 +1,47 @@
 package rx
 
-import (
-	"sync"
-
-	"github.com/brynbellomy/go-result"
-)
+import "sync"
 
 type Merge struct {
-	Inputs []<-chan result.Result
-
-	*Cancelable
-
-	out  *Subject
-	wait sync.WaitGroup
-
-	IObservable
+	Inputs []ISubscribable
 }
 
-func NewMerge(inputs ...<-chan result.Result) *Merge {
+func NewMerge(inputs ...ISubscribable) *Merge {
 	if inputs == nil || len(inputs) == 0 {
 		panic("Merge requires at least one input")
 	}
 
-	out := NewSubject()
-
-	return &Merge{
-		Inputs:      inputs,
-		Cancelable:  NewCancelable(),
-		out:         out,
-		IObservable: out,
-	}
+	return &Merge{Inputs: inputs}
 }
 
-func (m *Merge) Start() {
-	// Start an output goroutine for each input channel in m.Inputs.  output
-	// copies values from c to out until c is closed, then calls wait.Done.
-	m.wait.Add(len(m.Inputs))
-	for _, c := range m.Inputs {
-		go m.pipe(c)
+func (m *Merge) Subscribe() (IObservable, IDisposable) {
+	dispose := NewCompositeDisposable()
+
+	out, cancel := NewSubject(), NewCancelable()
+	dispose.Add(cancel)
+
+	wait := sync.WaitGroup{}
+	wait.Add(len(m.Inputs))
+
+	for _, in := range m.Inputs {
+		chIn, cancel := in.Subscribe()
+		dispose.Add(cancel)
+
+		go func() {
+			defer wait.Done()
+
+			for x := range chIn.Out() {
+				out.Send(x)
+			}
+		}()
 	}
 
-	// Start a goroutine to close `chOut` once all the output goroutines are
+	// Start a goroutine to close `out` once all the output goroutines are
 	// done.  This must start after the wait.Add call.
 	go func() {
-		defer m.out.Complete()
-		m.wait.Wait()
+		defer out.Complete()
+		wait.Wait()
 	}()
-}
 
-func (m *Merge) pipe(ch <-chan result.Result) {
-	defer m.wait.Done()
-	for res := range ch {
-		m.out.Send(res)
-	}
+	return out, cancel
 }

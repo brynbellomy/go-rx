@@ -3,34 +3,34 @@ package rx
 import "github.com/brynbellomy/go-result"
 
 type Broadcaster struct {
-	Channels  map[uint64]chan result.Result
+	Channels  map[uint64]IObserver
 	completed bool
 	counter   uint64
 }
 
 func NewBroadcaster() *Broadcaster {
 	return &Broadcaster{
-		Channels: make(map[uint64]chan result.Result),
+		Channels: make(map[uint64]IObserver),
 	}
 }
 
 func (b *Broadcaster) Subscribe() (IObservable, IDisposable) {
-	ch := make(chan result.Result)
+	out := NewSubject()
 
 	counter := b.counter
 	b.counter++
 
-	b.Channels[counter] = ch
+	b.Channels[counter] = out
 
-	return ObservableChan(ch), NewFuncDisposable(func() {
-		close(ch)
+	return out, NewFuncDisposable(func() {
+		out.Complete()
 		delete(b.Channels, counter)
 	})
 }
 
 func (b *Broadcaster) Send(val result.Result) {
 	for _, ch := range b.Channels {
-		ch <- val
+		ch.Send(val)
 	}
 }
 
@@ -40,7 +40,7 @@ func (b *Broadcaster) Complete() {
 	}
 
 	for _, ch := range b.Channels {
-		close(ch)
+		ch.Complete()
 	}
 	b.Channels = nil
 	b.completed = true
